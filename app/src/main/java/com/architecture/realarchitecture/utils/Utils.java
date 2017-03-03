@@ -86,7 +86,7 @@ public class Utils {
     }
 
     /**
-     * transformForUiLayer json string 2 map
+     * adaptStructForCache json string 2 map
      *
      * @param jsonStr
      * @return
@@ -218,27 +218,6 @@ public class Utils {
         return gson;
     }
 
-    public static <T> void waitForNetResponse(NetResponseLock<T> lock) {
-        synchronized (lock) {
-            while (!lock.netResponse) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    LogUtils.e(e);
-                }
-            }
-        }
-    }
-
-    public static <T> void notifyNetResponse(NetResponseLock lock, ResponseHeader rb, T datas) {
-        synchronized (lock) {
-            lock.netResponse = true;
-            lock.mRB = rb;
-            lock.mResponseDatas = datas;
-            lock.notifyAll();
-        }
-    }
-
     /**
      * 根据请求Api后缀构造请求url
      *
@@ -255,26 +234,6 @@ public class Utils {
         } else {
             return AppConfig.BASE_API_URL + "/" + suffixUri;
         }
-    }
-
-    public static void showServerErrorMsg(ResponseHeader rb) {
-        if (rb == null) return;
-        if (rb.getResponseCode() == VolleyClient.RESPONSE_OK) return;
-
-        if (rb.getResponseCode() == VolleyClient.NO_NET) {
-            ToastManager.show("网络连接不可用");
-            return;
-        }
-
-        String msg = rb.getErrorMessage();
-        int errorCode = rb.getErrorCode();
-
-        if (errorCode == 401) {
-            ToastManager.show("请重新登录");
-        }
-
-        if (TextUtils.isEmpty(msg)) return;
-        ToastManager.show(msg);
     }
 
 

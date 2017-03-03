@@ -63,7 +63,7 @@ public class DemoRequest extends Request<Map<String, Object>> {
     }
 
     @Override
-    protected Map<String, Object> transformForUiLayer(Map<String, Object> data) {
+    protected Map<String, Object> adaptStructForCache(Map<String, Object> data) {
         data = (Map<String, Object>) data.get("c");
         if (data == null) data = new HashMap<>();
 

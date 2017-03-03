@@ -3,7 +3,9 @@ package com.architecture.realarchitecture.datasource.net;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by liushuo on 2017/3/2.
@@ -22,6 +24,7 @@ public class RetrofitClient {
             if (retrofit == null) {
                 retrofit = new Retrofit.Builder()
                         .baseUrl("https://api.github.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
                         .build();
             }
         }

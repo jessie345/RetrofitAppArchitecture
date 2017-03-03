@@ -3,7 +3,9 @@ package com.architecture.realarchitecture.domain;
 import android.support.annotation.CallSuper;
 import android.text.TextUtils;
 
+import com.architecture.realarchitecture.datasource.net.HeaderSchema;
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
+import com.architecture.realarchitecture.datasource.net.StatusCode;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
@@ -26,9 +28,9 @@ public abstract class Request<K> implements ResponseListener<K> {
 
     public enum State {IDLE, RUNNING, DONE}
 
-    protected String mRequestTag;//客户端可以根据tag取消请求的执行
     protected String mDataType;
-    protected String mRequestId;//可以用于判定响应是否过期
+    protected String mRequestTag;//客户端可以根据tag取消请求的执行,默认为null，请求不能被取消
+    protected String mRequestId;//可以用于判定响应是否过期，默认为null，请求不会过期
     private RequestControllable mRequestController;
 
     private volatile K mResult;
@@ -37,7 +39,6 @@ public abstract class Request<K> implements ResponseListener<K> {
 
     public Request(String docType) {
         this.mDataType = docType;
-        mRequestTag = getClass().getSimpleName();
     }
 
     public abstract Call<Map<String, Object>> getCall();
@@ -52,7 +53,13 @@ public abstract class Request<K> implements ResponseListener<K> {
         mState = State.RUNNING;
     }
 
-    protected abstract K transformForUiLayer(Map<String, Object> v);
+    /**
+     * 将服务器返回的数据格式 转换适配到可以进行缓存的数据结构
+     *
+     * @param v
+     * @return
+     */
+    protected abstract K adaptStructForCache(Map<String, Object> v);
 
     protected abstract void cacheNetResponse(K data);
 
@@ -115,10 +122,9 @@ public abstract class Request<K> implements ResponseListener<K> {
     @CallSuper
     @Override
     public void onRetrofitResponse(ResponseHeader rb, Map<String, Object> header, Map<String, Object> content) {
-        if (content == null) return;
 
         extendNetResponseValid();
-        mResult = transformForUiLayer(content);
+        mResult = adaptStructForCache(content);
         cacheNetResponse(mResult);
         setDone(true);
 
@@ -157,11 +163,11 @@ public abstract class Request<K> implements ResponseListener<K> {
             return;
         }
 
-        int code = Integer.parseInt((String) header.get("c"));
-        if (code == 0) {
+        int code = Integer.parseInt((String) header.get(HeaderSchema.code));
+        if (code == StatusCode.Server.SERVER_SUCCESS) {
             EventBus.getDefault().post(new EventResponse(this, DataFrom.NET));
         } else {
-            String message = (String) header.get("e");
+            String message = (String) header.get(HeaderSchema.error_msg);
             EventBus.getDefault().post(new EventNetError(this, ResponseHeader.create(code, message)));
         }
     }

@@ -28,5 +28,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile files('libs/org.apache.http.legacy.jar')
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:retrofit-converters:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 }

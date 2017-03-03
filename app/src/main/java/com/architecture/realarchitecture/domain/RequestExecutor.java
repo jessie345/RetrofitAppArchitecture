@@ -23,11 +23,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RequestExecutor extends ThreadPoolExecutor {
 
-    private
-    static final int POOLSIZE = 3;
+    private static final int POOLSIZE = 3;
 
     Map<String, List<Future<String>>> mFutures = new HashMap<>();
-    Map<String, List<Request>> mRequests = new HashMap<>();
+    Map<Future, Request> mRequests = new HashMap<>();
 
     public RequestExecutor() {
         super(POOLSIZE, POOLSIZE, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new MyThreadFactory());
@@ -44,19 +43,13 @@ public class RequestExecutor extends ThreadPoolExecutor {
         //执行同步操作
         RunnableFuture<String> future = newTaskFor(task, tag);
         if (!TextUtils.isEmpty(tag)) {
-            List<Future<String>> list = mFutures.get(tag);
-            if (list == null) {
-                list = new ArrayList<>();
-                mFutures.put(tag, list);
+            List<Future<String>> futures = mFutures.get(tag);
+            if (futures == null) {
+                futures = new ArrayList<>();
+                mFutures.put(tag, futures);
             }
-            list.add(future);
-
-            List<Request> requests = mRequests.get(tag);
-            if (requests == null) {
-                requests = new ArrayList<>();
-                mRequests.put(tag, requests);
-            }
-            requests.add(task.getRequest());
+            futures.add(future);
+            mRequests.put(future, task.getRequest());
         }
 
         //执行异步任务
@@ -72,21 +65,23 @@ public class RequestExecutor extends ThreadPoolExecutor {
      */
     public synchronized void cancelRequest(String tag) {
         if (TextUtils.isEmpty(tag)) return;
-        if (!mFutures.containsKey(tag)) return;
 
         List<Future<String>> list = mFutures.get(tag);
-        for (Future<String> future : list) {
-            if (!future.isDone() && !future.isCancelled()) {
-                future.cancel(true);
-            }
-        }
-        list.clear();
+        if (list != null && list.size() > 0) {
+            for (Future<String> future : list) {
 
-        List<Request> requests = mRequests.get(tag);
-        for (Request request : requests) {
-            request.getCall().cancel();
+                Request request = mRequests.remove(future);
+                if (request != null && request.getCall() != null) {
+                    request.getCall().cancel();
+                }
+
+                if (future.isDone() || future.isCancelled()) continue;
+                future.cancel(true);
+
+            }
+            list.clear();
         }
-        requests.clear();
+
     }
 
     @Override
@@ -96,13 +91,15 @@ public class RequestExecutor extends ThreadPoolExecutor {
 
         try {
             Future<String> f = (Future<String>) r;
+            mRequests.remove(f);
+
             String tag = f.get();
-
             if (TextUtils.isEmpty(tag)) return;
-            if (!mFutures.containsKey(tag)) return;
 
-            List<Future<String>> list = mFutures.get(tag);
-            list.remove(r);
+            List<Future<String>> futures = mFutures.get(tag);
+            if (futures != null && futures.size() > 0) {
+                futures.remove(r);
+            }
 
         } catch (Exception e) {
             LogUtils.e(e);

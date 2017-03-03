@@ -3,6 +3,8 @@ package com.architecture.realarchitecture.domain.strategy.base;
 import android.support.annotation.NonNull;
 
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
+import com.architecture.realarchitecture.datasource.net.ResponseSchema;
+import com.architecture.realarchitecture.datasource.net.StatusCode;
 import com.couchbase.lite.internal.database.util.Pair;
 
 import java.util.Collections;
@@ -43,7 +45,7 @@ public abstract class RetrofitStrategy {
     private Pair<Map<String, Object>, Map<String, Object>> parseHeaderContent(Map<String, Object> resp) {
         if (resp == null) return Pair.create(null, null);
 
-        return Pair.create((Map<String, Object>) (resp.get("h")), (Map<String, Object>) (resp.get("c")));
+        return Pair.create((Map<String, Object>) (resp.get(ResponseSchema.header)), (Map<String, Object>) (resp.get(ResponseSchema.content)));
     }
 
     public void dispatchRetrofitResponse(ResponseHeader rh, Map<String, Object> header, Map<String, Object> content) {
@@ -53,7 +55,7 @@ public abstract class RetrofitStrategy {
         if (content != null) content = new ConcurrentHashMap<>(content);
         if (content == null) content = new ConcurrentHashMap<>();//返回客户端安全类型
 
-        if (rh.getCode() == ResponseHeader.HTTP_OK) {
+        if (rh.getCode() == StatusCode.Http.HTTP_OK) {
             notifyNetSuccess(rh, header, content);//网络数据返回，认为请求已经执行完成
         } else {
             notifyNetError(rh);
