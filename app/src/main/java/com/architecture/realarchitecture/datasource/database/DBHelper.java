@@ -56,7 +56,7 @@ class DBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("DROP TABLE IF EXISTS " + TableDef.TableNosql.DB_TABLE);
             db.execSQL("CREATE TABLE " + TableDef.TableNosql.DB_TABLE + "(" + TableDef.TableNosql.Column.COLUMN_ID
-                    + " INT NOT NULL DEFAULT 0 AUTO_INCREMENT PRIMARY KEY,"
+                    + " INTEGER PRIMARY KEY,"
                     + TableDef.TableNosql.Column.COLUMN_CONTENT_ID + " TEXT, "
                     + TableDef.TableNosql.Column.COLUMN_CONTENT_TYPE + " TEXT, "
                     + TableDef.TableNosql.Column.COLUMN_CONTENT + " TEXT); ");

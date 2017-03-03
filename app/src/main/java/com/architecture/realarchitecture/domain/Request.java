@@ -91,7 +91,12 @@ public abstract class Request<K> implements ResponseListener<K> {
 
         long lastRequestTime = PreferenceManager.getLongValue(mRequestId);
         long currentTime = System.currentTimeMillis();
-        return currentTime - lastRequestTime < getResponseValidThreshold();
+        boolean valid = currentTime - lastRequestTime < getResponseValidThreshold();
+
+        LogUtils.d("请求:");
+        LogUtils.d("响应有效:" + valid);
+
+        return valid;
     }
 
     /**
@@ -130,7 +135,10 @@ public abstract class Request<K> implements ResponseListener<K> {
 
         //通知ui网络返回
         dispatchRetrofitResponse(header);
-        LogUtils.d("net数据返回成功：" + mDataType);
+
+        LogUtils.d("请求:");
+        LogUtils.d(mResult);
+
 
     }
 
@@ -142,7 +150,10 @@ public abstract class Request<K> implements ResponseListener<K> {
 
         //通知ui缓存数据返回
         EventBus.getDefault().post(new EventResponse(this, DataFrom.CACHE));
-        LogUtils.d("cache数据返回成功：" + mDataType);
+
+        LogUtils.d("请求:");
+        LogUtils.d(mResult);
+
     }
 
     @Override
@@ -155,6 +166,9 @@ public abstract class Request<K> implements ResponseListener<K> {
     public void onNetRequestError(ResponseHeader httpResponse) {
         EventBus.getDefault().post(new EventNetError(this, httpResponse));
 
+        LogUtils.d("网络发生错误：" + mDataType);
+
+
     }
 
     protected void dispatchRetrofitResponse(Map<String, Object> header) {
@@ -163,7 +177,7 @@ public abstract class Request<K> implements ResponseListener<K> {
             return;
         }
 
-        int code = Integer.parseInt((String) header.get(HeaderSchema.code));
+        int code = (int) header.get(HeaderSchema.code);
         if (code == StatusCode.Server.SERVER_SUCCESS) {
             EventBus.getDefault().post(new EventResponse(this, DataFrom.NET));
         } else {
@@ -175,6 +189,10 @@ public abstract class Request<K> implements ResponseListener<K> {
     private void extendNetResponseValid() {
         if (!TextUtils.isEmpty(mRequestId)) {
             PreferenceManager.putLong(mRequestId, System.currentTimeMillis());
+
+            LogUtils.d("请求:");
+            LogUtils.d("延长响应有效时间");
+
         }
     }
 
