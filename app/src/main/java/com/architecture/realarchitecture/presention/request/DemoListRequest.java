@@ -19,27 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.architecture.realarchitecture.domain.request;
+package com.architecture.realarchitecture.presention.request;
 
-import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.datasource.DALFactory;
-import com.architecture.realarchitecture.datasource.net.ResponseSchema;
 import com.architecture.realarchitecture.datasource.net.RetrofitClient;
 import com.architecture.realarchitecture.domain.CacheDispatcher;
-import com.architecture.realarchitecture.domain.DataFrom;
-import com.architecture.realarchitecture.domain.DeDaoService;
-import com.architecture.realarchitecture.domain.Request;
-import com.architecture.realarchitecture.domain.eventbus.EventNetError;
-import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
-import com.architecture.realarchitecture.domain.eventbus.EventResponse;
-import com.architecture.realarchitecture.domain.strategy.base.ObjectGetStrategy;
-import com.architecture.realarchitecture.domain.strategy.object.ForceNetForObject;
-import com.architecture.realarchitecture.domain.strategy.object.Level3CacheForObject;
+import com.architecture.realarchitecture.presention.apiservice.DeDaoService;
+import com.architecture.realarchitecture.domain.request.Request;
+import com.architecture.realarchitecture.domain.strategy.array.ForceNetForArray;
+import com.architecture.realarchitecture.domain.strategy.array.Level3CacheForArray;
+import com.architecture.realarchitecture.domain.strategy.base.ArrayGetStrategy;
 import com.architecture.realarchitecture.utils.LogUtils;
 
-import org.greenrobot.eventbus.EventBus;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -48,43 +42,42 @@ import retrofit2.Call;
  * Created by liuzhi on 2016/3/24.
  * -------------------------------
  */
-public class DemoObjectRequest extends Request<Map<String, Object>> {
+public class DemoListRequest extends Request<List<Map<String, Object>>> {
 
-    private ObjectGetStrategy mRequestStragety;
-    private String mId;
+    private ArrayGetStrategy mRequestStragety;
 
-    public DemoObjectRequest(String dataType) {
+    public DemoListRequest(String dataType) {
         super(dataType);
-        mId = "9";
-        mRequestId = "demo_object_request";
+
+        setRequestId("demo_array_request");
     }
 
     @Override
     public Call<Map<String, Object>> getCall() {
-        return RetrofitClient.getApiService(DeDaoService.class).testGetObject();
+        return DALFactory.getApiService(DeDaoService.class).testGetList();
     }
 
     @Override
-    protected Map<String, Object> adaptStructForCache(Map<String, Object> data) {
+    protected List<Map<String, Object>> adaptStructForCache(Map<String, Object> data) {
 
-        data = (Map<String, Object>) data.get("data");
-        if (data == null) data = new HashMap<>();
+        List<Map<String, Object>> list = (List<Map<String, Object>>) data.get("structure");
+        if (list == null) list = new ArrayList<>();
 
         LogUtils.d("请求:");
-        LogUtils.d(data);
+        LogUtils.d(list);
 
-        return data;
+        return list;
     }
 
     /**
      * @param data data的数据结构为transformForUiLayer返回的数据结构
      */
     @Override
-    protected void cacheNetResponse(Map<String, Object> data) {
+    protected void cacheNetResponse(List<Map<String, Object>> data) {
         //1.检查是否需要缓存内存
-        DALFactory.getMemoryStorage().cacheObjectDataInMemory(mDataType, String.valueOf(data.get("id")), data);
+        DALFactory.getMemoryStorage().cacheArrayDatasInMemory(mDataType, data);
         //2.数据缓存本地
-        CacheDispatcher.getInstance().dispatchDataCache(mDataType, data);
+        CacheDispatcher.getInstance().dispatchDataCache(mDataType, data.toArray(new HashMap[0]));
 
         LogUtils.d("请求:");
         LogUtils.d(data);
@@ -96,9 +89,9 @@ public class DemoObjectRequest extends Request<Map<String, Object>> {
         super.perform();
 
         if (isResponseValid()) {
-            mRequestStragety = new Level3CacheForObject(mDataType, mId, getCall(), this);
+            mRequestStragety = new Level3CacheForArray(mDataType, getCall(), this);
         } else {
-            mRequestStragety = new ForceNetForObject(mDataType, mId, getCall(), this);
+            mRequestStragety = new ForceNetForArray(mDataType, getCall(), this);
         }
         mRequestStragety.fetchData();
     }

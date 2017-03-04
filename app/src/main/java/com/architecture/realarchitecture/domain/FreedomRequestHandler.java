@@ -6,6 +6,7 @@ import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
+import com.architecture.realarchitecture.domain.request.Request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,20 +24,20 @@ public class FreedomRequestHandler implements RequestRespondable {
     }
 
 
-    public void registerFreedomRequestHandler(String tag, RequestRespondable handler) {
-        if (TextUtils.isEmpty(tag) || handler == null) return;
+    public void registerFreedomRequestHandler(String requestId, RequestRespondable handler) {
+        if (TextUtils.isEmpty(requestId) || handler == null) return;
 
-        mFreedomRequestHandler.put(tag, handler);
+        mFreedomRequestHandler.put(requestId, handler);
     }
 
     private RequestRespondable getFreedomRequestHandler(Request request) {
         if (request == null) return null;
 
-        String tag = request.getRequestTag();
-        if (TextUtils.isEmpty(tag) || !mFreedomRequestHandler.containsKey(tag))
+        String requestId = request.getRequestId();
+        if (TextUtils.isEmpty(requestId))
             return null;
 
-        RequestRespondable handler = mFreedomRequestHandler.get(tag);
+        RequestRespondable handler = mFreedomRequestHandler.get(requestId);
         return handler;
     }
 

@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.FreedomRequestHandler;
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.RequestRespondable;
 import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
@@ -114,7 +114,7 @@ public abstract class BaseFragmentForSupport extends Fragment implements Request
         if (!isManagedRequest(error.mRequest)) return;
 
         mController.onNetRequestError(error);
-        handleErrorWhenRequest(error.mRequest, error.mRB);
+        handleRequestError(error.mRequest, error.mRB);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -128,7 +128,7 @@ public abstract class BaseFragmentForSupport extends Fragment implements Request
         if (!isManagedRequest(cancel.mRequest)) return;
 
         mController.onRequestCanceled(cancel);
-        handleNetRequestCanceled(cancel.mRequest, cancel.mRB);
+        handleRequestCanceled(cancel.mRequest);
     }
 
 
@@ -168,9 +168,9 @@ public abstract class BaseFragmentForSupport extends Fragment implements Request
 
     protected abstract void handlePreNetRequest(Request request);
 
-    protected abstract void handleErrorWhenRequest(Request request, ResponseHeader rb);
+    protected abstract void handleRequestError(Request request, ResponseHeader rb);
 
-    protected abstract void handleNetRequestCanceled(Request request, ResponseHeader rb);
+    protected abstract void handleRequestCanceled(Request request);
 
     protected abstract void handleReceivedResponse(EventResponse event);
 }

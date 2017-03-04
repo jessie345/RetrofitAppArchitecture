@@ -1,5 +1,8 @@
 package com.architecture.realarchitecture.domain;
 
+import android.text.TextUtils;
+
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.utils.LogUtils;
 
 import java.util.concurrent.Executor;
@@ -29,7 +32,7 @@ public class RequestManager {
         if (request == null) return;
 
         RequestRunnable runnable = new RequestRunnable(request);
-        mRequestExecutor.submitRequest(request.getRequestTag(), runnable);
+        mRequestExecutor.submitRequest(request.getRequestId(), runnable);
         LogUtils.d("running task count:" + mRequestExecutor.getActiveCount() + ",request:" + request.getClass().getSimpleName());
     }
 
@@ -51,11 +54,11 @@ public class RequestManager {
     /**
      * 取消正在执行的或者正在排队的请求
      *
-     * @param tag
+     * @param requestId
      */
-    public void cancelRequest(String tag) {
-        if (tag != null) {
-            mRequestExecutor.cancelRequest(tag);
+    public void cancelRequest(String requestId) {
+        if (!TextUtils.isEmpty(requestId)) {
+            mRequestExecutor.cancelRequest(requestId);
         }
     }
 

@@ -3,6 +3,7 @@ package com.architecture.realarchitecture.domain;
 import android.os.Process;
 import android.text.TextUtils;
 
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -35,18 +36,18 @@ public class RequestExecutor extends ThreadPoolExecutor {
     /**
      * 客户端使用本方法提交一个绑定到指定tag的任务，不同情况下可以根据tag取消任务
      *
-     * @param tag
+     * @param requestId
      * @param task
      * @return
      */
-    public synchronized void submitRequest(String tag, RequestManager.RequestRunnable task) {
+    public synchronized void submitRequest(String requestId, RequestManager.RequestRunnable task) {
         //执行同步操作
-        RunnableFuture<String> future = newTaskFor(task, tag);
-        if (!TextUtils.isEmpty(tag)) {
-            List<Future<String>> futures = mFutures.get(tag);
+        RunnableFuture<String> future = newTaskFor(task, requestId);
+        if (!TextUtils.isEmpty(requestId)) {
+            List<Future<String>> futures = mFutures.get(requestId);
             if (futures == null) {
                 futures = new ArrayList<>();
-                mFutures.put(tag, futures);
+                mFutures.put(requestId, futures);
             }
             futures.add(future);
             mRequests.put(future, task.getRequest());
@@ -61,12 +62,12 @@ public class RequestExecutor extends ThreadPoolExecutor {
     /**
      * 取消正在执行的或者正在排队的请求
      *
-     * @param tag
+     * @param requestId
      */
-    public synchronized void cancelRequest(String tag) {
-        if (TextUtils.isEmpty(tag)) return;
+    public synchronized void cancelRequest(String requestId) {
+        if (TextUtils.isEmpty(requestId)) return;
 
-        List<Future<String>> list = mFutures.get(tag);
+        List<Future<String>> list = mFutures.get(requestId);
         if (list != null && list.size() > 0) {
             for (Future<String> future : list) {
 
@@ -97,10 +98,10 @@ public class RequestExecutor extends ThreadPoolExecutor {
             Future<String> f = (Future<String>) r;
             mRequests.remove(f);
 
-            String tag = f.get();
-            if (TextUtils.isEmpty(tag)) return;
+            String requestId = f.get();
+            if (TextUtils.isEmpty(requestId)) return;
 
-            List<Future<String>> futures = mFutures.get(tag);
+            List<Future<String>> futures = mFutures.get(requestId);
             if (futures != null && futures.size() > 0) {
                 futures.remove(r);
             }

@@ -1,7 +1,7 @@
 package com.architecture.realarchitecture.domain.eventbus;
 
 import com.architecture.realarchitecture.domain.DataFrom;
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 
 /**
  * Created by liushuo on 16/3/27.

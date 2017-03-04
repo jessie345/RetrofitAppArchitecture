@@ -7,6 +7,7 @@ import com.architecture.realarchitecture.datasource.base.BaseLocalStorage;
 import com.architecture.realarchitecture.datasource.base.MemoryStorage;
 import com.architecture.realarchitecture.datasource.database.NosqlStorage;
 import com.architecture.realarchitecture.datasource.database.SqlStorage;
+import com.architecture.realarchitecture.datasource.net.RetrofitClient;
 
 /**
  * Created by liushuo on 16/4/5.
@@ -27,7 +28,6 @@ public class DALFactory {
      * @return
      */
     public static MemoryStorage getMemoryStorage() {
-        checkContext();
 
         return MemoryDataPool.getInstance();
     }
@@ -54,6 +54,11 @@ public class DALFactory {
 
         return SqlStorage.getInstance(mContext);
     }
+
+    public static <T> T getApiService(Class<T> cls) {
+        return RetrofitClient.getApiService(cls);
+    }
+
 
     private static void checkContext() {
         if (mContext == null)

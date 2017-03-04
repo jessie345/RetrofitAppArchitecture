@@ -6,9 +6,9 @@ import android.util.Log;
 import com.architecture.realarchitecture.R;
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.DataFrom;
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
-import com.architecture.realarchitecture.domain.request.DemoObjectRequest;
+import com.architecture.realarchitecture.presention.request.DemoObjectRequest;
 import com.architecture.realarchitecture.presention.base.RequestControllableActivity;
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class MainActivity extends RequestControllableActivity {
     }
 
     @Override
-    protected void handleNetRequestCanceled(Request request, ResponseHeader rb) {
+    protected void handleRequestCanceled(Request request) {
         // tick request canceled
     }
 

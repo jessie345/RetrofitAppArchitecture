@@ -1,11 +1,14 @@
-package com.architecture.realarchitecture.domain;
+package com.architecture.realarchitecture.domain.request;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.architecture.realarchitecture.datasource.net.HeaderSchema;
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.datasource.net.StatusCode;
+import com.architecture.realarchitecture.domain.DataFrom;
+import com.architecture.realarchitecture.domain.ResponseListener;
 import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
@@ -29,8 +32,8 @@ public abstract class Request<K> implements ResponseListener<K> {
     public enum State {IDLE, RUNNING, DONE}
 
     protected String mDataType;
-    protected String mRequestTag;//客户端可以根据tag取消请求的执行,默认为null，请求不能被取消
-    protected String mRequestId;//可以用于判定响应是否过期，默认为null，请求不会过期
+    /*请求的唯一标识,对等于get 请求中的请求路径，post请求中的路径+参数*/
+    private String mRequestId;
 
     protected boolean isCanceled;
     private RequestControllable mRequestController;
@@ -41,8 +44,11 @@ public abstract class Request<K> implements ResponseListener<K> {
 
     public Request(String docType) {
         this.mDataType = docType;
+
+        mRequestId = getClass().getSimpleName();
     }
 
+    @NonNull
     public abstract Call<Map<String, Object>> getCall();
 
     /**
@@ -53,8 +59,9 @@ public abstract class Request<K> implements ResponseListener<K> {
         if (mState != State.IDLE) throw new IllegalStateException("请求无法重复添加");
 
         //初始化请求的默认状态
-        mState = State.RUNNING;
         setCanceled(false);
+
+        mState = State.RUNNING;
     }
 
     /**
@@ -92,6 +99,22 @@ public abstract class Request<K> implements ResponseListener<K> {
         isCanceled = canceled;
     }
 
+    /**
+     * requestId的默认值为类名
+     *
+     * @return
+     */
+    public String getRequestId() {
+        return mRequestId;
+    }
+
+    public void setRequestId(@NonNull String mRequestId) {
+        if (TextUtils.isEmpty(mRequestId))
+            throw new IllegalArgumentException("不能将请求id设置为空值,有任何疑问，联系作者");
+
+        this.mRequestId = mRequestId;
+    }
+
 
     /**
      * 判定请求过期的策略由父亲类决定，子类提供requestId标示不同的请求，为空则每次都过期
@@ -118,14 +141,6 @@ public abstract class Request<K> implements ResponseListener<K> {
      */
     protected int getResponseValidThreshold() {
         return RESPONSE_VALID_THRESHOLD;
-    }
-
-    public void setRequestTag(String requestTag) {
-        this.mRequestTag = requestTag;
-    }
-
-    public String getRequestTag() {
-        return mRequestTag;
     }
 
     public void attachRequestController(RequestControllable requestController) {

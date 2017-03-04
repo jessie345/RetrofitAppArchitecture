@@ -200,7 +200,7 @@ public class SqlStorage implements AdvanceLocalStorage {
 
         for (Class cls : classes) {
             try {
-                String table = (String) cls.getSimpleName();
+                String table = cls.getSimpleName();
                 db.delete(table, null, null);
             } catch (Exception e) {
                 LogUtils.e(e);

@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Created by liushuo on 16/3/19.
+ * 注意:内存池返回的数据可能是null，调用者需要注意 异常判断
  */
 public class MemoryDataPool implements MemoryStorage {
     private static final int CACHE_SIZE = 10;

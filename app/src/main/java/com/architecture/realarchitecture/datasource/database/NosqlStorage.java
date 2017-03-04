@@ -40,7 +40,6 @@ import java.util.Map;
  * Created by Android Studio
  * User: killnono(陈凯)
  * Date: 16/5/9
- * Time: 下午2:02  兼容 api 16前,sql实现的couchbase兼容数据库
  * Version: 1.0
  */
 public class NosqlStorage implements BaseLocalStorage {

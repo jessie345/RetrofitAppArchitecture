@@ -2,7 +2,7 @@ package com.architecture.realarchitecture.domain.request.controller;
 
 import android.text.TextUtils;
 
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.RequestManager;
 import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
@@ -17,7 +17,7 @@ import java.util.Set;
  * Created by liushuo on 16/3/27.
  */
 public class RequestController implements RequestControllable {
-    private Set<String> mTags = new HashSet<>();
+    private Set<String> mRequestIds = new HashSet<>();
 
     public RequestController() {
     }
@@ -29,17 +29,17 @@ public class RequestController implements RequestControllable {
 
     @Override
     public void onNetRequestError(EventNetError error) {
-        removeRequestTag(error.mRequest.getRequestTag());
+        removeRequestId(error.mRequest.getRequestId());
     }
 
     @Override
     public void onRequestCanceled(EventRequestCanceled cancel) {
-        removeRequestTag(cancel.mRequest.getRequestTag());
+        removeRequestId(cancel.mRequest.getRequestId());
     }
 
-    private void removeRequestTag(String tag) {
-        if (!TextUtils.isEmpty(tag)) {
-            mTags.remove(tag);
+    private void removeRequestId(String requestId) {
+        if (!TextUtils.isEmpty(requestId)) {
+            mRequestIds.remove(requestId);
         }
     }
 
@@ -47,9 +47,9 @@ public class RequestController implements RequestControllable {
     public void enqueueRequest(Request request) {
 
         //首先执行同步操作
-        String tag = request.getRequestTag();
-        if (!TextUtils.isEmpty(tag)) {
-            mTags.add(request.getRequestTag());
+        String requestId = request.getRequestId();
+        if (!TextUtils.isEmpty(requestId)) {
+            mRequestIds.add(request.getRequestId());
         }
 
         request.attachRequestController(this);
@@ -60,10 +60,10 @@ public class RequestController implements RequestControllable {
 
     @Override
     public void cancelRequest() {
-        Iterator<String> itr = mTags.iterator();
+        Iterator<String> itr = mRequestIds.iterator();
         while (itr.hasNext()) {
-            String tag = itr.next();
-            RequestManager.getInstance().cancelRequest(tag);
+            String requestId = itr.next();
+            RequestManager.getInstance().cancelRequest(requestId);
             itr.remove();
         }
     }
@@ -71,7 +71,7 @@ public class RequestController implements RequestControllable {
     @Override
     public void onReceiveResponse(EventResponse event) {
         if (event.mRequest.isDone()) {
-            removeRequestTag(event.mRequest.getRequestTag());
+            removeRequestId(event.mRequest.getRequestId());
         }
     }
 

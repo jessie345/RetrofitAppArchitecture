@@ -1,6 +1,6 @@
 package com.architecture.realarchitecture.domain.request.controller;
 
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.RequestRespondable;
 
 /**

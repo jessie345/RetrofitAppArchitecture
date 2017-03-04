@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.FreedomRequestHandler;
-import com.architecture.realarchitecture.domain.Request;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.RequestRespondable;
 import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;

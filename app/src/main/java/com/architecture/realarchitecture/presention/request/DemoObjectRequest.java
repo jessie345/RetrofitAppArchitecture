@@ -19,24 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.architecture.realarchitecture.domain.request;
+package com.architecture.realarchitecture.presention.request;
 
 import com.architecture.realarchitecture.datasource.DALFactory;
 import com.architecture.realarchitecture.datasource.net.RetrofitClient;
 import com.architecture.realarchitecture.domain.CacheDispatcher;
-import com.architecture.realarchitecture.domain.DeDaoService;
-import com.architecture.realarchitecture.domain.Request;
-import com.architecture.realarchitecture.domain.strategy.array.ForceNetForArray;
-import com.architecture.realarchitecture.domain.strategy.array.Level3CacheForArray;
-import com.architecture.realarchitecture.domain.strategy.base.ArrayGetStrategy;
+import com.architecture.realarchitecture.presention.apiservice.DeDaoService;
+import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.strategy.base.ObjectGetStrategy;
 import com.architecture.realarchitecture.domain.strategy.object.ForceNetForObject;
 import com.architecture.realarchitecture.domain.strategy.object.Level3CacheForObject;
 import com.architecture.realarchitecture.utils.LogUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -45,41 +40,43 @@ import retrofit2.Call;
  * Created by liuzhi on 2016/3/24.
  * -------------------------------
  */
-public class DemoListRequest extends Request<List<Map<String, Object>>> {
+public class DemoObjectRequest extends Request<Map<String, Object>> {
 
-    private ArrayGetStrategy mRequestStragety;
+    private ObjectGetStrategy mRequestStragety;
+    private String mId;
 
-    public DemoListRequest(String dataType) {
+    public DemoObjectRequest(String dataType) {
         super(dataType);
-        mRequestId = "demo_array_request";
+        mId = "9";
+        setRequestId(getRequestId() + mId);
     }
 
     @Override
     public Call<Map<String, Object>> getCall() {
-        return RetrofitClient.getApiService(DeDaoService.class).testGetList();
+        return DALFactory.getApiService(DeDaoService.class).testGetObject();
     }
 
     @Override
-    protected List<Map<String, Object>> adaptStructForCache(Map<String, Object> data) {
+    protected Map<String, Object> adaptStructForCache(Map<String, Object> data) {
 
-        List<Map<String, Object>> list = (List<Map<String, Object>>) data.get("structure");
-        if (list == null) list = new ArrayList<>();
+        data = (Map<String, Object>) data.get("data");
+        if (data == null) data = new HashMap<>();
 
         LogUtils.d("请求:");
-        LogUtils.d(list);
+        LogUtils.d(data);
 
-        return list;
+        return data;
     }
 
     /**
      * @param data data的数据结构为transformForUiLayer返回的数据结构
      */
     @Override
-    protected void cacheNetResponse(List<Map<String, Object>> data) {
+    protected void cacheNetResponse(Map<String, Object> data) {
         //1.检查是否需要缓存内存
-        DALFactory.getMemoryStorage().cacheArrayDatasInMemory(mDataType, data);
+        DALFactory.getMemoryStorage().cacheObjectDataInMemory(mDataType, String.valueOf(data.get("id")), data);
         //2.数据缓存本地
-        CacheDispatcher.getInstance().dispatchDataCache(mDataType, data.toArray(new HashMap[0]));
+        CacheDispatcher.getInstance().dispatchDataCache(mDataType, data);
 
         LogUtils.d("请求:");
         LogUtils.d(data);
@@ -91,9 +88,9 @@ public class DemoListRequest extends Request<List<Map<String, Object>>> {
         super.perform();
 
         if (isResponseValid()) {
-            mRequestStragety = new Level3CacheForArray(mDataType, getCall(), this);
+            mRequestStragety = new Level3CacheForObject(mDataType, mId, getCall(), this);
         } else {
-            mRequestStragety = new ForceNetForArray(mDataType, getCall(), this);
+            mRequestStragety = new ForceNetForObject(mDataType, mId, getCall(), this);
         }
         mRequestStragety.fetchData();
     }
