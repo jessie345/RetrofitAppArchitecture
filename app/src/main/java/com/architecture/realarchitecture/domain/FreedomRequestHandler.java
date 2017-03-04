@@ -2,6 +2,7 @@ package com.architecture.realarchitecture.domain;
 
 import android.text.TextUtils;
 
+import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
@@ -54,6 +55,14 @@ public class FreedomRequestHandler implements RequestRespondable {
         if (handler == null) return;
 
         handler.onNetRequestError(error);
+    }
+
+    @Override
+    public void onRequestCanceled(EventRequestCanceled cancel) {
+        RequestRespondable handler = getFreedomRequestHandler(cancel.mRequest);
+        if (handler == null) return;
+
+        handler.onRequestCanceled(cancel);
     }
 
     @Override

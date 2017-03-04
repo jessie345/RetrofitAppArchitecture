@@ -71,8 +71,12 @@ public class RequestExecutor extends ThreadPoolExecutor {
             for (Future<String> future : list) {
 
                 Request request = mRequests.remove(future);
-                if (request != null && request.getCall() != null) {
-                    request.getCall().cancel();
+                if (request != null) {
+                    request.setCanceled(true);
+
+                    if (request.getCall() != null) {
+                        request.getCall().cancel();
+                    }
                 }
 
                 if (future.isDone() || future.isCancelled()) continue;

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.architecture.realarchitecture.datasource.net.HeaderSchema;
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.datasource.net.StatusCode;
+import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
@@ -21,7 +22,6 @@ import retrofit2.Call;
 
 /**
  * Created by liushuo on 16/3/17.
- * 注意:请求网络数据，底层可能返回null，所以调用者需要进行判空处理
  */
 public abstract class Request<K> implements ResponseListener<K> {
     private static final int RESPONSE_VALID_THRESHOLD = 30 * 60 * 1000;
@@ -31,6 +31,8 @@ public abstract class Request<K> implements ResponseListener<K> {
     protected String mDataType;
     protected String mRequestTag;//客户端可以根据tag取消请求的执行,默认为null，请求不能被取消
     protected String mRequestId;//可以用于判定响应是否过期，默认为null，请求不会过期
+
+    protected boolean isCanceled;
     private RequestControllable mRequestController;
 
     private volatile K mResult;
@@ -50,7 +52,9 @@ public abstract class Request<K> implements ResponseListener<K> {
     public void perform() {
         if (mState != State.IDLE) throw new IllegalStateException("请求无法重复添加");
 
+        //初始化请求的默认状态
         mState = State.RUNNING;
+        setCanceled(false);
     }
 
     /**
@@ -78,6 +82,14 @@ public abstract class Request<K> implements ResponseListener<K> {
 
     public boolean isDone() {
         return mState == State.DONE;
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        isCanceled = canceled;
     }
 
 
@@ -145,6 +157,14 @@ public abstract class Request<K> implements ResponseListener<K> {
     @CallSuper
     @Override
     public void onCacheResponse(K k, boolean isDone) {
+        if (isCanceled()) {
+            EventBus.getDefault().post(new EventRequestCanceled(this));
+            LogUtils.d("请求被取消：" + mDataType);
+
+            return;
+        }
+
+
         mResult = k;
         setDone(isDone);
 
@@ -167,8 +187,13 @@ public abstract class Request<K> implements ResponseListener<K> {
         EventBus.getDefault().post(new EventNetError(this, httpResponse));
 
         LogUtils.d("网络发生错误：" + mDataType);
+    }
 
+    @Override
+    public void onNetCanceled(ResponseHeader httpResponse) {
+        EventBus.getDefault().post(new EventRequestCanceled(this));
 
+        LogUtils.d("请求被取消：" + mDataType);
     }
 
     protected void dispatchRetrofitResponse(Map<String, Object> header) {

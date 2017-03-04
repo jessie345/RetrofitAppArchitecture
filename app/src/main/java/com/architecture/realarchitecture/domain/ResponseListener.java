@@ -20,4 +20,6 @@ public interface ResponseListener<T> {
 
 
     void onNetRequestError(ResponseHeader httpResponse);
+
+    void onNetCanceled(ResponseHeader httpResponse);
 }

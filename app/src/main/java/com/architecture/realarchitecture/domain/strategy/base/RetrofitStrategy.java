@@ -1,13 +1,13 @@
 package com.architecture.realarchitecture.domain.strategy.base;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.datasource.net.ResponseSchema;
 import com.architecture.realarchitecture.datasource.net.StatusCode;
 import com.couchbase.lite.internal.database.util.Pair;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +29,7 @@ public abstract class RetrofitStrategy {
     protected void invokeRetrofit() {
         Response<Map<String, Object>> response = null;
         try {
+            //when canceled ,it throws IOException("canceled")
             response = mCall.execute();
 
             //网络数据返回调用者
@@ -38,7 +39,12 @@ public abstract class RetrofitStrategy {
         } catch (Exception e) {
             e.printStackTrace();
 
-            dispatchRetrofitResponse(new ResponseHeader(-1, "Exception:" + e.getMessage()), null, null);
+            if (TextUtils.equals("canceled", e.getMessage())) {//请求被取消
+                dispatchRetrofitResponse(new ResponseHeader(StatusCode.Http.HTTP_CANCELED, e.getMessage()), null, null);
+            } else {
+                //请求执行过程中，发生异常
+                dispatchRetrofitResponse(new ResponseHeader(-1, e.getMessage()), null, null);
+            }
         }
     }
 
@@ -57,6 +63,8 @@ public abstract class RetrofitStrategy {
 
         if (rh.getCode() == StatusCode.Http.HTTP_OK) {
             notifyNetSuccess(rh, header, content);//网络数据返回，认为请求已经执行完成
+        } else if (rh.getCode() == StatusCode.Http.HTTP_CANCELED) {
+            notifyNetCanceled(rh);
         } else {
             notifyNetError(rh);
         }
@@ -65,5 +73,7 @@ public abstract class RetrofitStrategy {
     protected abstract void notifyNetSuccess(ResponseHeader rh, Map<String, Object> header, Map<String, Object> content);
 
     protected abstract void notifyNetError(ResponseHeader rb);
+
+    protected abstract void notifyNetCanceled(ResponseHeader rb);
 
 }

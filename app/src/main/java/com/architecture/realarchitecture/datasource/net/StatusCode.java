@@ -10,6 +10,7 @@ public interface StatusCode {
      */
     public interface Http {
         int HTTP_OK = 200;//服务器返回相应码
+        int HTTP_CANCELED = 700;//网络请求被取消
     }
 
     /**

@@ -8,13 +8,8 @@ import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.DataFrom;
 import com.architecture.realarchitecture.domain.Request;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
-import com.architecture.realarchitecture.domain.request.DemoListRequest;
 import com.architecture.realarchitecture.domain.request.DemoObjectRequest;
 import com.architecture.realarchitecture.presention.base.RequestControllableActivity;
-import com.architecture.realarchitecture.utils.Utils;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends RequestControllableActivity {
@@ -24,20 +19,24 @@ public class MainActivity extends RequestControllableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Request<Map<String, Object>> request = new DemoObjectRequest("testObject");
-        Request<List<Map<String, Object>>> request = new DemoListRequest("testArray");
+        Request<Map<String, Object>> request = new DemoObjectRequest("testObject");
+//         Request<List<Map<String, Object>>> request = new DemoListRequest("testArray");
         enqueueRequest(request);
-
     }
 
     @Override
     protected void handlePreNetRequest(Request request) {
-//showloading
+        //showloading
     }
 
     @Override
-    protected void handleErrorWhenRequest(Request request, ResponseHeader rb) {
-//toast
+    protected void handleNetRequestError(Request request, ResponseHeader rb) {
+        //toast
+    }
+
+    @Override
+    protected void handleNetRequestCanceled(Request request, ResponseHeader rb) {
+        // tick request canceled
     }
 
     @Override

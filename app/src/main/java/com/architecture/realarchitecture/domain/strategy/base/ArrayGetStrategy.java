@@ -36,5 +36,12 @@ public abstract class ArrayGetStrategy extends RetrofitStrategy {
         }
     }
 
+    @Override
+    protected void notifyNetCanceled(ResponseHeader rb) {
+        if (mResponseListener != null) {
+            mResponseListener.onNetCanceled(rb);
+        }
+    }
+
     public abstract void fetchData();
 }

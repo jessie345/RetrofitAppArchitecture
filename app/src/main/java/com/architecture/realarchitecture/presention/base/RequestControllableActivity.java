@@ -6,12 +6,12 @@ import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.FreedomRequestHandler;
 import com.architecture.realarchitecture.domain.Request;
 import com.architecture.realarchitecture.domain.RequestRespondable;
+import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
 import com.architecture.realarchitecture.domain.request.controller.RequestControllable;
 import com.architecture.realarchitecture.domain.request.controller.RequestController;
-import com.architecture.realarchitecture.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -70,7 +70,21 @@ public abstract class RequestControllableActivity extends BaseActivity implement
         if (!isManagedRequest(error.mRequest)) return;
 
         mController.onNetRequestError(error);
-        handleErrorWhenRequest(error.mRequest, error.mRB);
+        handleNetRequestError(error.mRequest, error.mRB);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Override
+    public void onRequestCanceled(EventRequestCanceled cancel) {
+        if (mFreedomRequestHandler.isFreedomRequest(cancel.mRequest)) {
+            mFreedomRequestHandler.onRequestCanceled(cancel);
+            return;
+        }
+
+        if (!isManagedRequest(cancel.mRequest)) return;
+
+        mController.onRequestCanceled(cancel);
+        handleRequestCanceled(cancel.mRequest);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -110,7 +124,11 @@ public abstract class RequestControllableActivity extends BaseActivity implement
 
     protected abstract void handlePreNetRequest(Request request);
 
-    protected abstract void handleErrorWhenRequest(Request request, ResponseHeader rb);
+    protected abstract void handleNetRequestError(Request request, ResponseHeader rb);
+
+    //多数情况下 用户可能不关心请求是否被取消，有特殊需求的页面，可以重写该方法
+    protected void handleRequestCanceled(Request request) {
+    }
 
     protected abstract void handleReceivedResponse(EventResponse event);
 }

@@ -1,10 +1,10 @@
 package com.architecture.realarchitecture.domain.request.controller;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.architecture.realarchitecture.domain.Request;
 import com.architecture.realarchitecture.domain.RequestManager;
+import com.architecture.realarchitecture.domain.eventbus.EventRequestCanceled;
 import com.architecture.realarchitecture.domain.eventbus.EventNetError;
 import com.architecture.realarchitecture.domain.eventbus.EventPreNetRequest;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
@@ -30,6 +30,11 @@ public class RequestController implements RequestControllable {
     @Override
     public void onNetRequestError(EventNetError error) {
         removeRequestTag(error.mRequest.getRequestTag());
+    }
+
+    @Override
+    public void onRequestCanceled(EventRequestCanceled cancel) {
+        removeRequestTag(cancel.mRequest.getRequestTag());
     }
 
     private void removeRequestTag(String tag) {
