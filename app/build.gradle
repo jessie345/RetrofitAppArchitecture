@@ -2,12 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-<<<<<<< HEAD
     buildToolsVersion '25.0.0'
-
-=======
-    buildToolsVersion "23.0.3"
->>>>>>> origin/master
     defaultConfig {
         applicationId "com.architecture.realarchitecture"
         minSdkVersion 17
