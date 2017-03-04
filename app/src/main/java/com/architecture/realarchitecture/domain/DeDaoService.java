@@ -14,6 +14,9 @@ import retrofit2.http.Path;
  */
 
 public interface DeDaoService {
-    @GET("users/{user}/repos")
-    Call<Map<String, Object>> listRepos(@Path("user") String user);
+    @GET("adv/latest")
+    Call<Map<String, Object>> testGetObject();
+
+    @GET("columnnote/alllist")
+    Call<Map<String, Object>> testGetList();
 }

@@ -18,10 +18,8 @@ import java.util.Set;
  */
 public class RequestController implements RequestControllable {
     private Set<String> mTags = new HashSet<>();
-    private Context mContext;
 
-    public RequestController(Context context) {
-        mContext = context.getApplicationContext();
+    public RequestController() {
     }
 
     @Override
@@ -37,7 +35,6 @@ public class RequestController implements RequestControllable {
     private void removeRequestTag(String tag) {
         if (!TextUtils.isEmpty(tag)) {
             mTags.remove(tag);
-
         }
     }
 

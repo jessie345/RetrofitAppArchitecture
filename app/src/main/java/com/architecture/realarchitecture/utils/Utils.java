@@ -10,13 +10,16 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.architecture.realarchitecture.AppConfig;
-import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.manager.ToastManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +32,6 @@ import java.util.Set;
  * Copyright (c) 2014 Nono_Lilith All right reserved.
  */
 public class Utils {
-
-    private static ThreadLocal<Gson> mGson = new ThreadLocal<Gson>();
 
     /**
      * @param context c
@@ -78,11 +79,16 @@ public class Utils {
     }
 
     public static String map2JsonString(Map<String, Object> data) {
-        if (data != null && data.size() > 0) {
-            Gson gson = getGsonForThread();
-            return gson.toJson(data);
+        ObjectMapper mapper = new ObjectMapper();
+        // convert map to JSON string
+        try {
+            String json = mapper.writeValueAsString(data);
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return "";
         }
-        return "";
     }
 
     /**
@@ -92,10 +98,19 @@ public class Utils {
      * @return
      */
     public static Map<String, Object> json2Map(String jsonStr) {
-        Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
-        Gson gson = new Gson();
-        Map<String, Object> map = gson.fromJson(jsonStr, type);
+        ObjectMapper mapper = new ObjectMapper();
+
+        // convert JSON string to Map
+        Map<String, Object> map = null;
+        try {
+            map = mapper.readValue(jsonStr, new TypeReference<Map<String, String>>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            map = new HashMap<>();
+        }
+
         return map;
     }
 
@@ -200,81 +215,6 @@ public class Utils {
             }
         }
         return str;
-    }
-
-
-    /**
-     * 多个线程同时使用一个Gson操作数据，会有并发问题
-     *
-     * @return
-     */
-    @NonNull
-    public static Gson getGsonForThread() {
-        Gson gson = mGson.get();
-        if (gson == null) {
-            gson = new Gson();
-            mGson.set(gson);
-        }
-        return gson;
-    }
-
-    public static <T> void waitForNetResponse(NetResponseLock<T> lock) {
-        synchronized (lock) {
-            while (!lock.netResponse) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    LogUtils.e(e);
-                }
-            }
-        }
-    }
-
-    public static <T> void notifyNetResponse(NetResponseLock lock, ResponseHeader rb, T datas) {
-        synchronized (lock) {
-            lock.netResponse = true;
-            lock.mRB = rb;
-            lock.mResponseDatas = datas;
-            lock.notifyAll();
-        }
-    }
-
-    /**
-     * 根据请求Api后缀构造请求url
-     *
-     * @param suffixUri api后缀
-     * @return resutl uri
-     */
-    public static String buildUrl(String suffixUri) {
-        if (suffixUri.contains("http://")
-                || suffixUri.contains("https://"))
-            return suffixUri;
-
-        if (suffixUri != null && suffixUri.indexOf("/") == 0) {
-            return AppConfig.BASE_API_URL + suffixUri;
-        } else {
-            return AppConfig.BASE_API_URL + "/" + suffixUri;
-        }
-    }
-
-    public static void showServerErrorMsg(ResponseHeader rb) {
-        if (rb == null) return;
-        if (rb.getResponseCode() == VolleyClient.RESPONSE_OK) return;
-
-        if (rb.getResponseCode() == VolleyClient.NO_NET) {
-            ToastManager.show("网络连接不可用");
-            return;
-        }
-
-        String msg = rb.getErrorMessage();
-        int errorCode = rb.getErrorCode();
-
-        if (errorCode == 401) {
-            ToastManager.show("请重新登录");
-        }
-
-        if (TextUtils.isEmpty(msg)) return;
-        ToastManager.show(msg);
     }
 
 

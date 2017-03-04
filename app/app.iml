@@ -69,6 +69,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/shaders" isTestSource="true" />
+<<<<<<< HEAD
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/assets" type="java-test-resource" />
@@ -76,27 +77,40 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
+=======
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
+>>>>>>> origin/master
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
+<<<<<<< HEAD
+=======
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-safeguard" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
+>>>>>>> origin/master
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="gson-2.4" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-2.7.2" level="project" />
     <orderEntry type="library" exported="" name="retrofit-2.2.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.7" level="project" />
     <orderEntry type="library" exported="" name="couchbase-lite-java-core-1.2.0" level="project" />
-    <orderEntry type="library" exported="" name="jackson-core-2.5.0" level="project" />
+    <orderEntry type="library" exported="" name="jackson-databind-2.7.2" level="project" />
+    <orderEntry type="library" exported="" name="converter-gson-2.2.0" level="project" />
     <orderEntry type="library" exported="" name="okio-1.11.0" level="project" />
     <orderEntry type="library" exported="" name="eventbus-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="volley_2015_10" level="project" />
-    <orderEntry type="library" exported="" name="jackson-databind-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.6.0" level="project" />
-    <orderEntry type="library" exported="" name="jackson-annotations-2.5.0" level="project" />
+    <orderEntry type="library" exported="" name="converter-jackson-2.2.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.3.0" level="project" />
+    <orderEntry type="library" exported="" name="jackson-annotations-2.7.0" level="project" />
     <orderEntry type="library" exported="" name="stateless4j-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="org.apache.http.legacy" level="project" />
     <orderEntry type="library" exported="" name="couchbase-lite-android-sqlite-default-1.2.0" level="project" />

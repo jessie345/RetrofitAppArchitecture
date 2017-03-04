@@ -30,7 +30,7 @@ public abstract class RequestControllableActivity extends BaseActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mController = new RequestController(mContext);
+        mController = new RequestController();
         mFreedomRequestHandler = new FreedomRequestHandler();
     }
 
@@ -70,7 +70,6 @@ public abstract class RequestControllableActivity extends BaseActivity implement
         if (!isManagedRequest(error.mRequest)) return;
 
         mController.onNetRequestError(error);
-        Utils.showServerErrorMsg(error.mRB);
         handleErrorWhenRequest(error.mRequest, error.mRB);
     }
 

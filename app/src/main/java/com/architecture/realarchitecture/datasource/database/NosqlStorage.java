@@ -81,7 +81,7 @@ public class NosqlStorage implements BaseLocalStorage {
         for (int i = 0; i < length && datas[i] != null; i++) {
             Map<String, Object> data = datas[i];
 
-            String id = (String) data.get(TableDef.TableNosql.Column.COLUMN_CONTENT_ID);
+            String id = String.valueOf(data.get(TableDef.TableNosql.Column.COLUMN_CONTENT_ID));
             if (TextUtils.isEmpty(id)) {
                 id = Long.toString(System.currentTimeMillis());
                 LogUtils.w("需要保存的数据没有id，自动将当前时间作为id，用户只能根据type 查询到此条数据:" + data.toString());

@@ -63,7 +63,7 @@ public abstract class BaseFragment extends Fragment implements RequestControllab
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mAct = getActivity();
-        mController = new RequestController(mAct);
+        mController = new RequestController();
         mFreedomRequestHandler = new FreedomRequestHandler();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -112,7 +112,6 @@ public abstract class BaseFragment extends Fragment implements RequestControllab
         if (!isManagedRequest(error.mRequest)) return;
 
         mController.onNetRequestError(error);
-        Utils.showServerErrorMsg(error.mRB);
         handleNetRequestError(error.mRequest, error.mRB);
     }
 

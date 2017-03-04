@@ -33,6 +33,12 @@ public class RequestManager {
         LogUtils.d("running task count:" + mRequestExecutor.getActiveCount() + ",request:" + request.getClass().getSimpleName());
     }
 
+    /**
+     * request 在自定义线程池中运行，不能被取消
+     *
+     * @param executor
+     * @param request
+     */
     public void enqueueRequest(Executor executor, Request request) {
         if (request == null || executor == null) return;
 

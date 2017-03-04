@@ -7,8 +7,6 @@ import java.io.Serializable;
  */
 public class ResponseHeader implements Serializable {
 
-    public static final int HTTP_OK = 200;
-
     public ResponseHeader(int code, String message) {
         mCode = code;
         mMessage = message;
