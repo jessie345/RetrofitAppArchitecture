@@ -11,6 +11,6 @@
 4.取消请求可以通过RequestManager.getInstance().cancelRequest()
 
 5.客户端如果需要返回bean，需要实现getTypeReference（）方法 eg:
-public User getTypeReference(){
+public TypeReference《User》 getTypeReference(){
 return new TypeReference《User》(){};
 }
