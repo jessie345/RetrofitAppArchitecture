@@ -12,5 +12,5 @@
 
 5.客户端如果需要返回bean，需要实现getTypeReference（）方法 eg:
 public User getTypeReference(){
-return new TypeReference<User>(){};
+return new TypeReference《User》(){};
 }
