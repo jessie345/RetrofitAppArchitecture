@@ -30,6 +30,7 @@ import com.architecture.realarchitecture.domain.strategy.base.ObjectGetStrategy;
 import com.architecture.realarchitecture.domain.strategy.object.ForceNetForObject;
 import com.architecture.realarchitecture.domain.strategy.object.Level3CacheForObject;
 import com.architecture.realarchitecture.utils.LogUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,11 @@ public class DemoObjectRequest extends Request<Map<String, Object>> {
     @Override
     public Call<Map<String, Object>> getCall() {
         return DALFactory.getApiService(DeDaoService.class).testGetObject();
+    }
+
+    @Override
+    public TypeReference getTypeReference() {
+        return null;
     }
 
     @Override

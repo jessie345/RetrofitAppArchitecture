@@ -8,8 +8,10 @@ import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.domain.DataFrom;
 import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
+import com.architecture.realarchitecture.presention.request.DemoListRequest;
 import com.architecture.realarchitecture.presention.request.DemoObjectRequest;
 import com.architecture.realarchitecture.presention.base.RequestControllableActivity;
+import com.architecture.realarchitecture.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,8 +28,8 @@ public class MainActivity extends RequestControllableActivity {
         setContentView(R.layout.activity_main);
 
 //        Request<Map<String, Object>> request = new DemoObjectRequest("testObject");
-//         Request<List<Map<String, Object>>> request = new DemoListRequest("testArray");
-//        enqueueRequest(request);
+        Request<List<Map<String, Object>>> request = new DemoListRequest("testArray");
+        enqueueRequest(request);
 
     }
 

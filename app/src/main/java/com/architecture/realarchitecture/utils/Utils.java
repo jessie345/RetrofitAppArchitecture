@@ -71,13 +71,6 @@ public class Utils {
         return new Pair<>(sql.toString(), args.toArray(new String[args.size()]));
     }
 
-    //TypeReference ref = new TypeReference<List<User>>() { };
-    //TypeReference ref = new TypeReference<User>() { };
-    public static <T> TypeReference<T> getTypeRef() {
-        return new TypeReference<T>() {
-        };
-    }
-
     public static String map2JsonString(Map<String, Object> data) {
         ObjectMapper mapper = new ObjectMapper();
         // convert map to JSON string

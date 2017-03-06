@@ -82,16 +82,27 @@ public abstract class Request<K> implements ResponseListener<K> {
         return mResult;
     }
 
-    //TypeReference ref = new TypeReference<List<User>>() { };
-    //TypeReference ref = new TypeReference<User>() { };
+    /**
+     * 返回类型引用，用于jackson 将map转换成bean
+     * eg.TypeReference ref = new TypeReference<List<User>>() { };
+     * 将map list格式化成List<User>
+     * <p>
+     * TypeReference ref = new TypeReference<User>() { };
+     * 将map 格式化成User
+     *
+     * @return
+     */
+    public abstract TypeReference getTypeReference();
 
-    public <V> V getResultBean(TypeReference<V> typeRef) {
+    public <V> V getResultBean() {
         if (getResult() == null) return null;
 
-        ObjectMapper mapper = new ObjectMapper();
+        TypeReference typeRef = getTypeReference();
+        if (typeRef == null) return null;
 
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.convertValue(getResult(), typeRef);
+            return (V) mapper.convertValue(getResult(), typeRef);
         } catch (Exception e) {
             e.printStackTrace();
 
