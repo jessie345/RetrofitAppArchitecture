@@ -2,11 +2,11 @@ package com.architecture.realarchitecture.domain.strategy.base;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.architecture.realarchitecture.datasource.net.ResponseHeader;
 import com.architecture.realarchitecture.datasource.net.ResponseSchema;
 import com.architecture.realarchitecture.datasource.net.StatusCode;
-import com.couchbase.lite.internal.database.util.Pair;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
