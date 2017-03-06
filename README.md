@@ -9,3 +9,8 @@
 3.数据请求结果通过RequestControlableActivity 子类的handlexxxx()回调，回调到客户端，客户端根据请求类型执行不同的操作
 
 4.取消请求可以通过RequestManager.getInstance().cancelRequest()
+
+5.客户端如果需要返回bean，需要实现getTypeReference（）方法 eg:
+public TypeReference&lt;User&gt getTypeReference(){
+return new TypeReference&lt;User&gt(){};
+}
