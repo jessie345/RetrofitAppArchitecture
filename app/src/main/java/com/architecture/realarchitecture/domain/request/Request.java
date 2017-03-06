@@ -16,6 +16,9 @@ import com.architecture.realarchitecture.domain.eventbus.EventResponse;
 import com.architecture.realarchitecture.domain.request.controller.RequestControllable;
 import com.architecture.realarchitecture.manager.PreferenceManager;
 import com.architecture.realarchitecture.utils.LogUtils;
+import com.architecture.realarchitecture.utils.Utils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -77,6 +80,23 @@ public abstract class Request<K> implements ResponseListener<K> {
 
     public K getResult() {
         return mResult;
+    }
+
+    //TypeReference ref = new TypeReference<List<User>>() { };
+    //TypeReference ref = new TypeReference<User>() { };
+
+    public <V> V getResultBean(TypeReference<V> typeRef) {
+        if (getResult() == null) return null;
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            return mapper.convertValue(getResult(), typeRef);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
     }
 
     protected void setDone(boolean isDone) {

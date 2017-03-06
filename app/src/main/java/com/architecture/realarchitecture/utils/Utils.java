@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,6 +69,13 @@ public class Utils {
         sql.append(")");
 
         return new Pair<>(sql.toString(), args.toArray(new String[args.size()]));
+    }
+
+    //TypeReference ref = new TypeReference<List<User>>() { };
+    //TypeReference ref = new TypeReference<User>() { };
+    public static <T> TypeReference<T> getTypeRef() {
+        return new TypeReference<T>() {
+        };
     }
 
     public static String map2JsonString(Map<String, Object> data) {

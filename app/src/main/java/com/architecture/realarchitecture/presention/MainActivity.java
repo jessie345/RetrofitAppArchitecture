@@ -10,6 +10,12 @@ import com.architecture.realarchitecture.domain.request.Request;
 import com.architecture.realarchitecture.domain.eventbus.EventResponse;
 import com.architecture.realarchitecture.presention.request.DemoObjectRequest;
 import com.architecture.realarchitecture.presention.base.RequestControllableActivity;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends RequestControllableActivity {
@@ -19,9 +25,10 @@ public class MainActivity extends RequestControllableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Request<Map<String, Object>> request = new DemoObjectRequest("testObject");
+//        Request<Map<String, Object>> request = new DemoObjectRequest("testObject");
 //         Request<List<Map<String, Object>>> request = new DemoListRequest("testArray");
-        enqueueRequest(request);
+//        enqueueRequest(request);
+
     }
 
     @Override
