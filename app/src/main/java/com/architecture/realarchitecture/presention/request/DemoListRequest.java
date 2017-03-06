@@ -30,6 +30,7 @@ import com.architecture.realarchitecture.domain.strategy.array.ForceNetForArray;
 import com.architecture.realarchitecture.domain.strategy.array.Level3CacheForArray;
 import com.architecture.realarchitecture.domain.strategy.base.ArrayGetStrategy;
 import com.architecture.realarchitecture.utils.LogUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +83,11 @@ public class DemoListRequest extends Request<List<Map<String, Object>>> {
         LogUtils.d("请求:");
         LogUtils.d(data);
 
+    }
+
+    @Override
+    public TypeReference getTypeReference() {
+        return null;
     }
 
     @Override

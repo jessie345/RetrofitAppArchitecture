@@ -117,8 +117,8 @@ public abstract class RequestControllableActivity extends BaseActivity implement
         return mController.isManagedRequest(request);
     }
 
-    public void registerFreedomRequestHandler(String tag, RequestRespondable handler) {
-        mFreedomRequestHandler.registerFreedomRequestHandler(tag, handler);
+    public void registerFreedomRequestHandler(String requestId, RequestRespondable handler) {
+        mFreedomRequestHandler.registerFreedomRequestHandler(requestId, handler);
     }
 
 
